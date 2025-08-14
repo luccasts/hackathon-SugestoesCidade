@@ -44,7 +44,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   ],
 }));
 
-export default function likeCard() {
+export function LikeCard() {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [expanded, setExpanded] = useState(false);
 
