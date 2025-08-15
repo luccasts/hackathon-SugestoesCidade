@@ -1,8 +1,10 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('register/', views.registrar, name='register'),
+    path('', views.home, name='home'),
     path('login/', views.entrar, name='login'),
-    path('logout/', views.sair, name='logout'),
+    path('register/', views.registrar, name='register'),
+    path('logout/',views.sair, name='logout'),
 ]
