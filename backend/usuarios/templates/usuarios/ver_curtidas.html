@@ -1,0 +1,13 @@
+<h2>Quem curtiu: {{ postagem.titulo }}</h2>
+
+<ul>
+    {% for curtida in curtidas %}
+        <li>{{ curtida.usuario.username }}</li>
+    {% empty %}
+        <li>Ninguém curtiu ainda</li>
+    {% endfor %}
+    
+
+</ul>
+
+<a href="{% url 'home' %}">Voltar</a>

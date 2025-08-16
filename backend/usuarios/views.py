@@ -11,7 +11,15 @@ from .models import Postagem, Curtida
 
 # Home
 def home(request):
-    postagens = Postagem.objects.annotate(num_curtidas=Count('curtidas')).order_by('-num_curtidas')
+    postagens = (
+        Postagem.objects
+        .annotate(num_curtidas=Count('curtidas'))
+        .order_by('-num_curtidas')
+        )
+    
+    for p in postagens:
+        p.ja_curtiu = p.curtidas.filter(usuario=request.user).exists() if request.user.is_authenticated else False
+    
     return render(request, 'usuarios/home.html', {'postagens': postagens})
 
 @login_required
@@ -27,13 +35,28 @@ def criar_postagem(request):
 @login_required
 def curtir_postagem(request, postagem_id):
     postagem = get_object_or_404(Postagem, id = postagem_id)
-    curtida, created = Curtida.objects.get_or_create(usuario = request.user, postagem=postagem)
-    if not created:
-        messages.warning(request, "Você já curtiu essa postagem")
+    
+    curtida = Curtida.objects.filter(usuario = request.user, postagem=postagem).first()
+    
+    if curtida is not None:
+        curtida.delete()
+        messages.info(request, "Você removeu sua curtida da postagem")
     else:
-        messages.success(request, "Curtida registrada")
-    return redirect('home')
+        Curtida.objects.create(usuario = request.user, postagem = postagem)
+        messages.success(request, "Você curtiu a postagem")
 
+    return redirect('home')
+    
+@login_required
+def ver_curtida(request, postagem_id):
+    postagem = get_object_or_404(Postagem, id=postagem_id)
+    curtidas = Curtida.objects.filter(postagem = postagem).select_related("usuario")
+    
+    return render(request, "usuarios/ver_curtidas.html", {
+        "postagem":postagem,
+        "curtidas":curtidas,
+    })
+    
 # Register
 def registrar(request):
     if request.method == "POST":
@@ -69,4 +92,3 @@ def sair(request):
     logout(request)
     messages.info(request, "Você saiu da conta.")
     return redirect('login')
-

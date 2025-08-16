@@ -9,4 +9,5 @@ urlpatterns = [
     path('logout/',views.sair, name='logout'),
     path('nova/',views.criar_postagem, name='criar_postagem'),
     path('curtir/<int:postagem_id>/',views.curtir_postagem, name='curtir_postagem'),
+    path("postagem/<int:postagem_id>/curtidas/", views.ver_curtida, name="ver_curtidas")
 ]

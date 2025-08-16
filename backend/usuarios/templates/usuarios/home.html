@@ -1,3 +1,13 @@
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+        {{ message }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
 {% if user.is_authenticated %}
     <p>Você está conectado como <strong>{{ user.username }}</strong> | <a href="{% url 'logout' %}">Sair</a></p>
     <a href="{% url 'criar_postagem' %}">Criar uma postagem</a>
@@ -6,12 +16,16 @@
 {% endif %}
 
 <ul>
-    {% for post in postagens %}
+    {% for postagem in postagens %}
     <li>
-        <strong>{{post.titulo}}</strong> - {{ post.descricao }}
-        <br>Autor: {{post.Autor.username }} | Curtidas: {{ post.total.curtidas }}
+        <strong>{{postagem.titulo}}</strong> - {{ postagem.descricao }}
+        <br>Autor: {{postagem.autor.username }} | Curtidas: <a href="{% url 'ver_curtidas' postagem.id %}">{{ postagem.curtidas.count }}</a>
         {% if user.is_authenticated %}
-            <a href="{% url 'curtir_postagem' post.id %}">Curtir</a>
+            {% if postagem.ja_curtiu %}
+                <a href="{% url 'curtir_postagem' postagem.id %}">Descurtir</a>
+            {% else %}
+                <a href="{% url 'curtir_postagem' postagem.id %}">Curtir</a>
+            {% endif %}
         {% endif %}
     </li>
     {% empty %}
