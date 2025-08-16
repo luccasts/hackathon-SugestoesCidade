@@ -1,13 +1,15 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('login/', views.entrar, name='login'),
-    path('register/', views.registrar, name='register'),
-    path('logout/',views.sair, name='logout'),
-    path('nova/',views.criar_postagem, name='criar_postagem'),
-    path('curtir/<int:postagem_id>/',views.curtir_postagem, name='curtir_postagem'),
-    path("postagem/<int:postagem_id>/curtidas/", views.ver_curtida, name="ver_curtidas")
+    # Autenticação
+    path("auth/register/", views.registrar_usuario, name="registrar_usuario"),
+    path("auth/login/", views.login_usuario, name="login_usuario"),
+    path("auth/logout/",views.logout_usuario, name="logout_usuario"),
+    
+    # Postagens
+    path("postagens/",views.listar_postagens, name="listar_postagens"),
+    path("postagens/criar/",views.criar_postagem, name="criar_postagem"),
+    path("postagens/<int:postagem_id>/curtir/",views.curtir_postagem, name="curtir_postagem"),
+    path("postagens/<int:postagem_id>/curtidas/", views.ver_curtidas, name="ver_curtidas")
 ]
