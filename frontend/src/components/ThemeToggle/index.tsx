@@ -12,7 +12,7 @@ export default function ThemeToggleButton({
 }: IThemeToggleButton) {
   return (
     <IconButton onClick={onToggle} color="inherit">
-      {isDark ? <Brightness7Icon /> : <Brightness4Icon />}
+      {isDark ? <Brightness4Icon /> : <Brightness7Icon />}
     </IconButton>
   );
 }
