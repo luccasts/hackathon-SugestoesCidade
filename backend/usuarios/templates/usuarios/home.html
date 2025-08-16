@@ -1,10 +1,20 @@
 {% if user.is_authenticated %}
-    <p>Você está conectado como <strong>{{ user.username }}</strong></p>
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Sair</button>
-    </form>
+    <p>Você está conectado como <strong>{{ user.username }}</strong> | <a href="{% url 'logout' %}">Sair</a></p>
+    <a href="{% url 'criar_postagem' %}">Criar uma postagem</a>
 {% else %}
-    <p>Voce não está logado. <a href="{% url 'login' %}">Entrar</a></p>
+    <a href="{% url 'login' %}">Entrar</a> | <a href="{% url 'register' %}">Registrar</a>
 {% endif %}
 
+<ul>
+    {% for post in postagens %}
+    <li>
+        <strong>{{post.titulo}}</strong> - {{ post.descricao }}
+        <br>Autor: {{post.Autor.username }} | Curtidas: {{ post.total.curtidas }}
+        {% if user.is_authenticated %}
+            <a href="{% url 'curtir_postagem' post.id %}">Curtir</a>
+        {% endif %}
+    </li>
+    {% empty %}
+        <li>Não há postagens ainda.</li>
+    {% endfor %}
+</ul>

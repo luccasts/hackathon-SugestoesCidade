@@ -1,0 +1,8 @@
+<h1>Nova Postagem</h1>
+<form method="POST">
+    {% csrf_token %}
+    <input type="text" name="titulo" placeholder="Título" required><br>
+    <textarea name="descricao" placeholder="Descrição" required></textarea><br>
+    <button type="submit">Postar</button>
+</form>
+<a href="{% url 'home' %}">Voltar</a>

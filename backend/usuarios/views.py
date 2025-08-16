@@ -1,14 +1,38 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.db.models import Count
+from .models import Postagem, Curtida
+
 
 # Create your views here.
 
 # Home
 def home(request):
-    return render(request, 'usuarios/home.html', {'user': request.user})
+    postagens = Postagem.objects.annotate(num_curtidas=Count('curtidas')).order_by('-num_curtidas')
+    return render(request, 'usuarios/home.html', {'postagens': postagens})
+
+@login_required
+def criar_postagem(request):
+    if request.method == "POST":
+        titulo = request.POST.get("titulo")
+        descricao = request.POST.get("descricao")
+        Postagem.objects.create(titulo=titulo, descricao=descricao, autor=request.user)
+        messages.success(request, "Postagem criada com sucesso")
+        return redirect('home')
+    return render(request, 'usuarios/criar_postagem.html')
+
+@login_required
+def curtir_postagem(request, postagem_id):
+    postagem = get_object_or_404(Postagem, id = postagem_id)
+    curtida, created = Curtida.objects.get_or_create(usuario = request.user, postagem=postagem)
+    if not created:
+        messages.warning(request, "Você já curtiu essa postagem")
+    else:
+        messages.success(request, "Curtida registrada")
+    return redirect('home')
 
 # Register
 def registrar(request):
