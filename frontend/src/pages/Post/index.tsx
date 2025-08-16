@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { sugeCityService } from "../../api/sugeCityService";
 
-export default function LoginPage() {
+export default function PostPage() {
   const [nome, setNome] = useState("");
   const [password, setPassword] = useState("");
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

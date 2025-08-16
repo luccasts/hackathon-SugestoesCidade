@@ -1,12 +1,19 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { sugeCityService } from "../../api/sugeCityService";
 
 export default function RegisterPage() {
   const [nome, setNome] = useState("");
   const [password, setPassword] = useState("");
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log(password, nome);
+    try {
+      const res = await sugeCityService.registerUser(nome, password);
+      console.log(res);
+    } catch (error) {
+      console.error(error);
+    }
   }
   return (
     <Box

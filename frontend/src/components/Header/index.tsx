@@ -20,6 +20,7 @@ import {
 
 import logo from "../../assets/img/logo.png";
 import { useState } from "react";
+
 type AnchorElType = null | HTMLElement;
 interface IHaderComponent {
   onToggle: () => void;
@@ -37,6 +38,7 @@ export default function HeaderComponent({ onToggle, isDark }: IHaderComponent) {
     setAlchorEl(null);
   };
   const menuItens = ["Home", "Rank", "Sobre"];
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar color="default" position="static">
