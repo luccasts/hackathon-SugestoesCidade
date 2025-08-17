@@ -11,5 +11,7 @@ urlpatterns = [
     path("postagens/",views.listar_postagens, name="listar_postagens"),
     path("postagens/criar/",views.criar_postagem, name="criar_postagem"),
     path("postagens/<int:postagem_id>/curtir/",views.curtir_postagem, name="curtir_postagem"),
-    path("postagens/<int:postagem_id>/curtidas/", views.ver_curtidas, name="ver_curtidas")
+    path("postagens/<int:postagem_id>/curtidas/", views.ver_curtidas, name="ver_curtidas"),
+    
+    path("me/", views.perfil_usuario, name = "perfil_usuario"),
 ]

@@ -10,6 +10,14 @@ from .serializers import PostagemSerializer
 
 # Create your views here.
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def perfil_usuario(request):
+    return Response({
+        "id": request.user.id,
+        "usuario": request.user.username
+    })
+
 # Registrar
 @api_view(["POST"])
 @permission_classes([AllowAny])

@@ -67,6 +67,12 @@ CORS_ALLOW_ALL_ORIGINS = True # Muda isso aqui depois de testar!!!!!!!!!!!!!!!!!
 #     "https://meu-frontend.com",
 # ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES':(
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
