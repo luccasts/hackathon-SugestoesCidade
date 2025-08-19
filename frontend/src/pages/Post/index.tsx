@@ -4,13 +4,13 @@ import { Link } from "react-router";
 import { sugeCityService } from "../../api/sugeCityService";
 
 export default function PostPage() {
-  const [nome, setNome] = useState("");
-  const [password, setPassword] = useState("");
+  const [tiitulo, setTitulo] = useState("");
+  const [descricao, setDescricao] = useState("");
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(password, nome);
     try {
-      const res = await sugeCityService.loginUser(nome, password);
+      const id = 1;
+      const res = await sugeCityService.createPost(tiitulo, descricao, id);
       console.log(res);
     } catch (error) {
       console.error(error);
@@ -25,7 +25,7 @@ export default function PostPage() {
       gap={1}
     >
       <Typography variant="h2" component={"h1"}>
-        Logar-se
+        Criar postagem
       </Typography>
       <Box component={"form"} onSubmit={(e) => handleSubmit(e)}>
         <TextField
@@ -35,8 +35,8 @@ export default function PostPage() {
           label="Digite o Nome"
           variant="outlined"
           autoComplete="current-password"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
+          value={tiitulo}
+          onChange={(e) => setTitulo(e.target.value)}
         />
         <TextField
           required
@@ -44,8 +44,8 @@ export default function PostPage() {
           id="outlined-password-input"
           label="Digite a Senha"
           autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={descricao}
+          onChange={(e) => setDescricao(e.target.value)}
         />
         <Box display={"flex"} justifyContent={"center"}>
           <Button type="submit" variant="contained">

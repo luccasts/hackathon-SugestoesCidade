@@ -1,17 +1,18 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router";
-import { sugeCityService } from "../../api/sugeCityService";
+import { useAuth } from "../../context/Auth";
 
 export default function LoginPage() {
   const [nome, setNome] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(password, nome);
+
     try {
-      const res = await sugeCityService.loginUser(nome, password);
-      console.log(res);
+      const a = await login(nome, password);
+      console.log("a", a);
     } catch (error) {
       console.error(error);
     }

@@ -1,8 +1,11 @@
 import { Box, Container, Grid, Typography } from "@mui/material";
 import { LikeCard } from "../../components/Card";
+import { useAuth } from "../../context/Auth";
 
 export default function HomePage() {
-  console.log(import.meta.env.VITE_API_URL);
+  const { authenticatedUser } = useAuth();
+
+  console.log(authenticatedUser);
   return (
     <Container maxWidth="xl">
       <Box display={"flex"} flexDirection={"column"} gap={2}>
