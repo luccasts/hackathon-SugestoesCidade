@@ -20,6 +20,7 @@ import {
 
 import logo from "../../assets/img/logo.png";
 import { useState } from "react";
+import { useAuth } from "../../context/Auth";
 
 type AnchorElType = null | HTMLElement;
 interface IHaderComponent {
@@ -28,6 +29,7 @@ interface IHaderComponent {
 }
 export default function HeaderComponent({ onToggle, isDark }: IHaderComponent) {
   const theme = useTheme();
+  const { authenticatedUser, logout } = useAuth();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const [anchorEl, setAlchorEl] = useState<AnchorElType>(null);
   const open = Boolean(anchorEl);
@@ -37,7 +39,14 @@ export default function HeaderComponent({ onToggle, isDark }: IHaderComponent) {
   const handleClose = () => {
     setAlchorEl(null);
   };
-  const menuItens = ["Home", "Rank", "Sobre"];
+
+  async function handleLogout() {
+    const res = logout();
+
+    console.log(res);
+  }
+
+  const menuItens = ["Home", "Criar Postagem"];
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -154,24 +163,38 @@ export default function HeaderComponent({ onToggle, isDark }: IHaderComponent) {
               <Button color="primary" component={Link} to="/">
                 Home
               </Button>
-              <Button color="primary" component={Link} to="/rank">
+              {/* <Button color="primary" component={Link} to="/ranking">
                 Rank
-              </Button>
-              <Button color="primary" component={Link} to="/sobre">
-                Sobre
-              </Button>
-            </Box>
-            <Box component={"div"}>
-              <ThemeToggleButton onToggle={onToggle} isDark={isDark} />
-              <Button
-                variant="contained"
-                component={Link}
-                to={"/login"}
-                color="primary"
-              >
-                Login
+              </Button> */}
+              <Button color="primary" component={Link} to="/criar-postagem">
+                Criar postagem
               </Button>
             </Box>
+            {authenticatedUser.user !== null ? (
+              <Box component={"div"}>
+                <ThemeToggleButton onToggle={onToggle} isDark={isDark} />
+                <Button
+                  variant="contained"
+                  type="button"
+                  onClick={handleLogout}
+                  color="primary"
+                >
+                  Logout
+                </Button>
+              </Box>
+            ) : (
+              <Box component={"div"}>
+                <ThemeToggleButton onToggle={onToggle} isDark={isDark} />
+                <Button
+                  variant="contained"
+                  component={Link}
+                  to={"/login"}
+                  color="primary"
+                >
+                  Login
+                </Button>
+              </Box>
+            )}
           </Toolbar>
         </Container>
       </AppBar>

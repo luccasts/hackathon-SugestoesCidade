@@ -4,19 +4,18 @@ import { axiosInstance } from "./sugeCityInstance";
 export const sugeCityService = {
   getAllPosts: async () => {
     try {
-      const res = await axiosInstance.get("postagens/");
+      const res = await axiosInstance.get("api/postagens/");
       return res;
     } catch (erro) {
       console.error(erro);
     }
   },
 
-  createPost: async (titulo: string, descricao: string, id: number) => {
+  createPost: async (titulo: string, descricao: string) => {
     try {
-      const res = await axiosInstance.post("api/postagens/criar", {
-        titulo,
-        descricao,
-        autor: id,
+      const res = await axiosInstance.post("api/postagens/criar/", {
+        titulo: titulo,
+        descricao: descricao,
       });
       return res;
     } catch (erro) {
@@ -66,6 +65,24 @@ export const sugeCityService = {
           Authorization: `Bearer ${access}`,
         },
       });
+      return res;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  likingPost: async (id: number) => {
+    try {
+      const res = await axiosInstance.post(`api/postagens/${id}/curtir/`, {
+        id,
+      });
+      return res;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getPostLikes: async (id: number) => {
+    try {
+      const res = await axiosInstance.get(`api/postagens/${id}/curtidas/`);
       return res;
     } catch (error) {
       console.error(error);

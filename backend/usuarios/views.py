@@ -74,7 +74,7 @@ def criar_postagem(request):
     postagem = Postagem.objects.create(
         titulo = titulo,
         descricao = descricao,
-        autor = request.User
+        autor = request.user
     )
     return Response({"success": "Postagem criada", "id": postagem.id})
     

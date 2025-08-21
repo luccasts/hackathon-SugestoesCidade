@@ -1,12 +1,11 @@
-import { useState, useEffect, useMemo, useContext } from "react";
-
+import { useState, useEffect, useMemo, useContext, useCallback } from "react";
 import type { AuthType, AuthProviderProps } from "./types";
-
 import { sugeCityService } from "../../api/sugeCityService";
 import { AuthContext } from "./auth";
 import { axiosInstance } from "../../api/sugeCityInstance";
-
+import { useNavigate } from "react-router";
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const navigate = useNavigate();
   const [authenticatedUser, setAuthenticatedUser] = useState<AuthType>({
     user: null,
     token: null,
@@ -36,40 +35,43 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     loadUser();
   }, []);
 
-  const login = async (username: string, password: string) => {
-    try {
-      const res = await sugeCityService.getToken(username, password);
+  const login = useCallback(
+    async (username: string, password: string) => {
+      try {
+        const res = await sugeCityService.getToken(username, password);
 
-      if (res?.data) {
-        const { access, refresh } = res.data;
-        localStorage.setItem("access", access);
-        localStorage.setItem("refresh", refresh);
+        if (res?.data) {
+          const { access, refresh } = res.data;
+          localStorage.setItem("access", access);
+          localStorage.setItem("refresh", refresh);
 
-        axiosInstance.defaults.headers.common["Authorization"] =
-          `Bearer ${access}`;
-        const userRes = await sugeCityService.getUserData(access);
+          axiosInstance.defaults.headers.common["Authorization"] =
+            `Bearer ${access}`;
+          const userRes = await sugeCityService.getUserData(access);
 
-        setAuthenticatedUser({
-          user: userRes?.data,
-          token: access,
-        });
-        console.log(authenticatedUser, "dentro do if");
+          setAuthenticatedUser({
+            user: userRes?.data,
+            token: access,
+          });
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Erro no login: ", error);
       }
-      console.log(authenticatedUser, "fora do if");
-    } catch (error) {
-      console.error("Erro no login: ", error);
-    }
-  };
+    },
+    [navigate],
+  );
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     setAuthenticatedUser({ user: null, token: null });
-  };
+    navigate("/");
+  }, [setAuthenticatedUser, navigate]);
 
   const contextValue = useMemo(
     () => ({ login, logout, authenticatedUser }),
-    [authenticatedUser],
+    [login, authenticatedUser, logout],
   );
 
   return (

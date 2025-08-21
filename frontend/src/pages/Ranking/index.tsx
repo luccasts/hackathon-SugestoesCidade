@@ -8,13 +8,13 @@ interface IData {
   descricao: string;
   autor: string;
 }
-export default function HomePage() {
+export default function RankingPage() {
   const [data, setData] = useState<IData[]>();
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     async function getAllPosts() {
       try {
-        const res = await sugeCityService.getAllPosts();
+        const res = await sugeCityService.rankingPosts();
         if (res?.data) {
           setData(res.data);
           setLoading(false);
@@ -29,7 +29,7 @@ export default function HomePage() {
     <Container maxWidth="xl">
       <Box display={"flex"} flexDirection={"column"} gap={2}>
         <Typography color="inhereit" variant="h1" component={"h1"}>
-          Sugestões para a Cidade
+          Ranking de Sugestões
         </Typography>
 
         <Grid container spacing={2} justifyContent={"center"}>

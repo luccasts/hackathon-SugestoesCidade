@@ -3,14 +3,13 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { sugeCityService } from "../../api/sugeCityService";
 
-export default function PostPage() {
+export default function CreatePostPage() {
   const [tiitulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
-      const id = 1;
-      const res = await sugeCityService.createPost(tiitulo, descricao, id);
+      const res = await sugeCityService.createPost(tiitulo, descricao);
       console.log(res);
     } catch (error) {
       console.error(error);
@@ -40,16 +39,16 @@ export default function PostPage() {
         />
         <TextField
           required
-          type="password"
+          type="text"
           id="outlined-password-input"
-          label="Digite a Senha"
+          label="Descrição"
           autoComplete="current-password"
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
         />
         <Box display={"flex"} justifyContent={"center"}>
           <Button type="submit" variant="contained">
-            Entrar
+            Enviar
           </Button>
         </Box>
         <Box>

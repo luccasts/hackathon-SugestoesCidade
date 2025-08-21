@@ -1,20 +1,16 @@
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
-
 import IconButton, { type IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
-import { useEffect, useState } from "react";
-import { Box, Skeleton } from "@mui/material";
+import { useState } from "react";
+import { sugeCityService } from "../../api/sugeCityService";
+import Collapse from "@mui/material/Collapse";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -30,71 +26,80 @@ const ExpandMore = styled(IconButton, {
   }),
 }));
 
-export function LikeCard() {
-  const [like, setLike] = useState(false);
+interface ILikeCard {
+  titulo: string;
+  descricao: string;
+  autor: string;
+  id: number;
+}
+interface ILikePost {
+  postaagem: string;
+  curtidas: string[];
+}
+export function LikeCard({ titulo, descricao, autor, id }: ILikeCard) {
+  const [ranking, setRanking] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, []);
+  const [postLikes, setPostLikes] = useState<ILikePost>();
 
-  const handleFavoriteClick = () => {
+  const handleFavoriteClick = async () => {
+    await sugeCityService.likingPost(id);
+    // console.log(res);
+    handleRanking();
     setIsFavorited(!isFavorited);
   };
-  const handleExpandClick = () => {
-    setLike(!like);
+  const handleRanking = async () => {
+    try {
+      const res = await sugeCityService.getPostLikes(id);
+      if (res?.data) {
+        setPostLikes(res?.data);
+        setRanking(!ranking);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <Card sx={{ maxWidth: 200 }}>
-      {loading ? (
-        <Box>
-          <Skeleton></Skeleton>
-        </Box>
-      ) : (
-        <>
-          <CardHeader title="Saphine" subheader="September 14, 2025" />
-
+      <>
+        <CardHeader title={titulo} subheader={`Autor: ${autor}`} />
+        <CardContent>
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            {descricao}
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing>
+          <IconButton
+            aria-label="add to favorites"
+            onClick={handleFavoriteClick}
+          >
+            <FavoriteIcon sx={{ color: isFavorited ? "red" : "inherit" }} />
+          </IconButton>
+          <IconButton aria-label="share">
+            <ShareIcon />
+          </IconButton>
+          <ExpandMore
+            expand={ranking}
+            onClick={handleRanking}
+            aria-expanded={ranking}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon />
+          </ExpandMore>
+        </CardActions>
+        <Collapse in={ranking} timeout="auto" unmountOnExit>
           <CardContent>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              This impressive paella is a perfect party dish and a fun meal to
-              cook together with your guests. Add 1 cup of frozen peas along
-              with the mussels, if you like.
-            </Typography>
+            <Typography sx={{ marginBottom: 2 }}>Curtidas:</Typography>
+            {postLikes ? (
+              postLikes.curtidas.map((c) => (
+                <Typography sx={{ marginBottom: 2 }}>{c}</Typography>
+              ))
+            ) : (
+              <Typography>Nenhuma curtida ainda</Typography>
+            )}
           </CardContent>
-          <CardActions disableSpacing>
-            <IconButton
-              aria-label="add to favorites"
-              onClick={handleFavoriteClick}
-            >
-              <FavoriteIcon sx={{ color: isFavorited ? "red" : "inherit" }} />
-            </IconButton>
-            <IconButton aria-label="share">
-              <ShareIcon />
-            </IconButton>
-            <ExpandMore
-              expand={like}
-              onClick={handleExpandClick}
-              aria-expanded={like}
-              aria-label="show more"
-            >
-              <ExpandMoreIcon />
-            </ExpandMore>
-          </CardActions>
-          <Collapse in={like} timeout="auto" unmountOnExit>
-            <CardContent>
-              <Typography sx={{ marginBottom: 2 }}>Method:</Typography>
-              <Typography sx={{ marginBottom: 2 }}>
-                Heat 1/2 cup of the broth in a pot until simmering, add saffron
-                and set aside for 10 minutes.
-              </Typography>
-            </CardContent>
-          </Collapse>
-        </>
-      )}
+        </Collapse>
+      </>
     </Card>
   );
 }
