@@ -6,9 +6,8 @@ import CardActions from "@mui/material/CardActions";
 import IconButton, { type IconButtonProps } from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { sugeCityService } from "../../api/sugeCityService";
 import Collapse from "@mui/material/Collapse";
 
@@ -41,24 +40,26 @@ export function LikeCard({ titulo, descricao, autor, id }: ILikeCard) {
   const [isFavorited, setIsFavorited] = useState(false);
   const [postLikes, setPostLikes] = useState<ILikePost>();
 
+  useEffect(() => {
+    const handleRanking = async () => {
+      try {
+        const res = await sugeCityService.getPostLikes(id);
+        if (res?.data) {
+          setPostLikes(res?.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    handleRanking();
+  }, [id]);
   const handleFavoriteClick = async () => {
     await sugeCityService.likingPost(id);
     // console.log(res);
-    handleRanking();
+    // handleRanking();
     setIsFavorited(!isFavorited);
   };
-  const handleRanking = async () => {
-    try {
-      const res = await sugeCityService.getPostLikes(id);
-      if (res?.data) {
-        setPostLikes(res?.data);
-        setRanking(!ranking);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+  const handleExpand = () => setRanking(!ranking);
   return (
     <Card sx={{ maxWidth: 200 }}>
       <>
@@ -75,25 +76,20 @@ export function LikeCard({ titulo, descricao, autor, id }: ILikeCard) {
           >
             <FavoriteIcon sx={{ color: isFavorited ? "red" : "inherit" }} />
           </IconButton>
-          <IconButton aria-label="share">
-            <ShareIcon />
-          </IconButton>
           <ExpandMore
             expand={ranking}
-            onClick={handleRanking}
+            onClick={handleExpand}
             aria-expanded={ranking}
-            aria-label="show more"
+            aria-label="mostrar mais curtidas"
           >
             <ExpandMoreIcon />
           </ExpandMore>
         </CardActions>
         <Collapse in={ranking} timeout="auto" unmountOnExit>
           <CardContent>
-            <Typography sx={{ marginBottom: 2 }}>Curtidas:</Typography>
+            <Typography sx={{ marginBottom: 1 }}>Curtidas:</Typography>
             {postLikes ? (
-              postLikes.curtidas.map((c) => (
-                <Typography sx={{ marginBottom: 2 }}>{c}</Typography>
-              ))
+              postLikes.curtidas.map((c) => <Typography>{c}</Typography>)
             ) : (
               <Typography>Nenhuma curtida ainda</Typography>
             )}
